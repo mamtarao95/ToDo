@@ -28,6 +28,7 @@ public class Utility {
 	}
 
 	public static boolean validateReminder(Date reminder) {
+		
 		return reminder.before(new Date());
 		
 	}

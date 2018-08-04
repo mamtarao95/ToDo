@@ -112,24 +112,43 @@
 
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework.social</groupId>
-			<artifactId>spring-social-google</artifactId>
-			<version>1.0.0.RELEASE</version>
-		</dependency>
+<!-- https://mvnrepository.com/artifact/org.springframework.social/spring-social-facebook -->
+<dependency>
+    <groupId>org.springframework.social</groupId>
+    <artifactId>spring-social-facebook</artifactId>
+    <version>2.0.3.RELEASE</version>
+</dependency>
+
+		<!-- <dependency> <groupId>org.springframework.social</groupId> <artifactId>spring-social-google</artifactId> 
+			<version>1.0.0.RELEASE</version> </dependency> -->
 
 
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-redis</artifactId>
-			<version>2.0.3.RELEASE</version>
+
 		</dependency>
 
 		<dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
-			<version>2.9.0</version>
+
 			<type>jar</type>
+		</dependency>
+
+
+		<!-- <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-security</artifactId> 
+			</dependency> <dependency> <groupId>org.springframework.security.oauth.boot</groupId> 
+			<artifactId>spring-security-oauth2-autoconfigure</artifactId> <version>2.0.1.RELEASE</version> 
+			</dependency> -->
+
+
+
+		<dependency>
+			<!-- jsoup HTML parser library @ https://jsoup.org/ -->
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.11.3</version>
 		</dependency>
 
 	</dependencies>

@@ -1,10 +1,13 @@
 package com.bridgelabz.fundoonoteapp.note.services;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import com.bridgelabz.fundoonoteapp.note.exceptions.LabelNameAlreadyUsedException;
 import com.bridgelabz.fundoonoteapp.note.exceptions.LabelNotFoundException;
+import com.bridgelabz.fundoonoteapp.note.exceptions.MalformedUrlException;
 import com.bridgelabz.fundoonoteapp.note.exceptions.NoteNotFoundException;
 import com.bridgelabz.fundoonoteapp.note.exceptions.NoteNotTrashedException;
 import com.bridgelabz.fundoonoteapp.note.exceptions.ReminderDateNotValidException;
@@ -12,6 +15,7 @@ import com.bridgelabz.fundoonoteapp.note.exceptions.UnAuthorizedException;
 import com.bridgelabz.fundoonoteapp.note.exceptions.UserNotFoundException;
 import com.bridgelabz.fundoonoteapp.note.models.CreateNoteDTO;
 import com.bridgelabz.fundoonoteapp.note.models.LabelDTO;
+import com.bridgelabz.fundoonoteapp.note.models.Note;
 import com.bridgelabz.fundoonoteapp.note.models.UpdateNoteDTO;
 import com.bridgelabz.fundoonoteapp.note.models.NoteDTO;
 
@@ -26,9 +30,11 @@ public interface NoteService {
 	 * @throws LabelNotFoundException
 	 * @throws ReminderDateNotValidException
 	 * @throws UserNotFoundException 
+	 * @throws IOException 
+	 * @throws MalformedUrlException 
 	 */
 	NoteDTO createNote(CreateNoteDTO createNoteDTO, String userId)
-			throws NoteNotFoundException, UnAuthorizedException, LabelNotFoundException, ReminderDateNotValidException, UserNotFoundException;
+			throws NoteNotFoundException, UnAuthorizedException, LabelNotFoundException, ReminderDateNotValidException, UserNotFoundException, IOException, MalformedUrlException;
 
 	/**
 	 * @param token
@@ -137,79 +143,6 @@ public interface NoteService {
 	 */
 	void unArchive(String userId, String noteId) throws UnAuthorizedException, NoteNotFoundException, UserNotFoundException;
 
-	/**
-	 * @param userId
-	 * @return
-	 * @throws LabelNotFoundException
-	 */
-	List<LabelDTO> getLabels(String userId) throws LabelNotFoundException;
-
-	/**
-	 * @param labelName
-	 * @param userId
-	 * @return
-	 * @throws UnAuthorizedException
-	 * @throws LabelNotFoundException
-	 * @throws LabelNameAlreadyUsedException 
-	 */
-	LabelDTO createLabel(String labelName, String userId) throws UnAuthorizedException, LabelNotFoundException, LabelNameAlreadyUsedException;
-
-	/**
-	 * @param labelName
-	 * @param userId
-	 * @throws UnAuthorizedException
-	 * @throws LabelNotFoundException
-	 * @throws UserNotFoundException
-	 */
-	void deleteLabel(String labelName, String userId) throws UnAuthorizedException, LabelNotFoundException, UserNotFoundException;
-
-	/**
-	 * @param labelName
-	 * @param userId
-	 * @return
-	 * @throws UnAuthorizedException
-	 * @throws LabelNotFoundException
-	 * @throws UserNotFoundException
-	 */
-	Iterable<NoteDTO> getNotesOfLabel(String labelName, String userId) throws UnAuthorizedException, LabelNotFoundException, UserNotFoundException;
-
-	/**
-	 * @param labelName
-	 * @param userId
-	 * @param noteId
-	 * @throws UnAuthorizedException
-	 * @throws NoteNotFoundException
-	 * @throws LabelNotFoundException
-	 * @throws LabelNameAlreadyUsedException
-	 * @throws UserNotFoundException 
-	 */
-	void addLabel(String labelName, String userId, String noteId) throws UnAuthorizedException, NoteNotFoundException, LabelNotFoundException, LabelNameAlreadyUsedException, UserNotFoundException;
-
-	/**
-	 * @param labelId
-	 * @param userId
-	 * @param newLabelName
-	 * @throws UnAuthorizedException
-	 * @throws LabelNotFoundException
-	 * @throws UserNotFoundException
-	 */
-	void renameLabel(String labelId, String userId, String newLabelName) throws UnAuthorizedException, LabelNotFoundException, UserNotFoundException;
-
-	/**
-	 * @param userId
-	 * @param labelId
-	 * @param noteId
-	 * @throws UserNotFoundException
-	 * @throws LabelNotFoundException
-	 * @throws NoteNotFoundException
-	 * @throws UnAuthorizedException
-	 */
-	void removeLabel(String userId, String labelId, String noteId) throws UserNotFoundException, LabelNotFoundException, NoteNotFoundException, UnAuthorizedException;
-
-	/**
-	 * @param noteId
-	 * @param userId
-	 */
 
 
 	/**
@@ -231,5 +164,6 @@ public interface NoteService {
 	 * @throws UnAuthorizedException 
 	 */
 	void pinOrUnpinNote(String userId, String noteId, boolean isPin) throws UnAuthorizedException, NoteNotFoundException, UserNotFoundException;
-
+	public Optional<Note> validateNoteAndUser(String noteId, String userId)
+			throws UnAuthorizedException, NoteNotFoundException, UserNotFoundException ;
 }

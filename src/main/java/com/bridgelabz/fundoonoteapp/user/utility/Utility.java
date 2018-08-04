@@ -6,8 +6,8 @@ import java.util.UUID;
 import javax.security.auth.login.LoginException;
 import javax.xml.bind.DatatypeConverter;
 
-import com.bridgelabz.fundoonoteapp.user.exceptions.ForgotPasswordException;
-import com.bridgelabz.fundoonoteapp.user.exceptions.RegisterationException;
+import com.bridgelabz.fundoonoteapp.user.exceptions.UserNotFoundException;
+import com.bridgelabz.fundoonoteapp.user.exceptions.IncorrectPasswordException;
 import com.bridgelabz.fundoonoteapp.user.models.LoginDTO;
 import com.bridgelabz.fundoonoteapp.user.models.RegistrationDTO;
 import com.bridgelabz.fundoonoteapp.user.models.SetPasswordDTO;
@@ -24,27 +24,27 @@ public class Utility {
 
 	private final static String SECRET = "mamta";
 
-	public static void validateUserInformation(RegistrationDTO registrationDTO) throws RegisterationException {
+	public static void validateUserInformation(RegistrationDTO registrationDTO) throws IncorrectPasswordException {
 
 		if (registrationDTO.getEmail() == null || registrationDTO.getPassword() == null
 				|| registrationDTO.getConfirmPassword() == null || registrationDTO.getFirstName() == null
 				|| registrationDTO.getLastName() == null || registrationDTO.getMobileNumber() == null) {
-			throw new RegisterationException("Fields cannot be null.All fields are mandatory.");
+			throw new IncorrectPasswordException("Fields cannot be null.All fields are mandatory.");
 		}
 
 		if (!validateEmail(registrationDTO.getEmail())) {
-			throw new RegisterationException("Invalid Email-id");
+			throw new IncorrectPasswordException("Invalid Email-id");
 		}
 		if (!validatePassword(registrationDTO.getPassword()) || registrationDTO.getPassword() == "") {
-			throw new RegisterationException(
+			throw new IncorrectPasswordException(
 					"(1)-Password must be must be atleast 8 characters long" + "(2)- Must have numbers and letters"
 							+ "(3)- Must have at least a one special characters- “!,@,#,$,%,&,*,(,),+");
 		}
 		if (!registrationDTO.getPassword().equals(registrationDTO.getConfirmPassword())) {
-			throw new RegisterationException("PASSWORD and CONFIRM PASSWORD fields are not matching!!");
+			throw new IncorrectPasswordException("PASSWORD and CONFIRM PASSWORD fields are not matching!!");
 		}
 		if (registrationDTO.getMobileNumber().length() != 10 || registrationDTO.getMobileNumber() == "") {
-			throw new RegisterationException("Mobile number should be 10 digits long");
+			throw new IncorrectPasswordException("Mobile number should be 10 digits long");
 		}
 
 	}
@@ -95,15 +95,15 @@ public class Utility {
 		}
 	}
 
-	public static void resetPasswordValidation(SetPasswordDTO setPasswordDTO) throws ForgotPasswordException {
+	public static void resetPasswordValidation(SetPasswordDTO setPasswordDTO) throws UserNotFoundException {
 		if (setPasswordDTO.getNewPassword() == null || setPasswordDTO.getNewPassword() == "") {
-			throw new ForgotPasswordException("New Password field cannot be empty");
+			throw new UserNotFoundException("New Password field cannot be empty");
 		}
 		if (setPasswordDTO.getConfirmPassword() == null || setPasswordDTO.getConfirmPassword() == "") {
-			throw new ForgotPasswordException("Confirm Password field cannot be empty");
+			throw new UserNotFoundException("Confirm Password field cannot be empty");
 		}
 		if (!setPasswordDTO.getConfirmPassword().equals(setPasswordDTO.getNewPassword())) {
-			throw new ForgotPasswordException("New password and confirm password does not matches!!");
+			throw new UserNotFoundException("New password and confirm password does not matches!!");
 		}
 
 	}

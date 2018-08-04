@@ -1,38 +1,43 @@
-package com.bridgelabz.fundoonoteapp.user.services;
-import javax.annotation.PostConstruct;
+package com.bridgelabz.fundoonoteapp.user.repositories;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
-import com.bridgelabz.fundoonoteapp.user.repositories.RedisRepository;
 
 @Repository
 public class RedisRepositoryImpl implements RedisRepository {
-    private static final String KEY = "TOKEN";
+    
+	@Value("${redis.key}")
+	private String key;
       
     private RedisTemplate<String, String> redisTemplate;
   
     private HashOperations<String, String, String> hashOperations;
-  
+    
     @Autowired
     public RedisRepositoryImpl(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
+        hashOperations = this.redisTemplate.opsForHash();
     }
   
-    @PostConstruct
-    private void init() {
-        hashOperations = redisTemplate.opsForHash();
+    @Override
+    public void save(String uuid, String userId) {
+        hashOperations.put(key, uuid, userId);
     }
  
     @Override
-    public void save(String uid, String userId) {
-        hashOperations.put(KEY, uid, userId);
+    public String getValue(String uuid) {
+        return hashOperations.get(key, uuid);
     }
- 
+    
     @Override
-    public String find(String uid) {
-        return hashOperations.get(KEY, uid);
+    public Long delete(String uuid) {
+    	return hashOperations.delete(key, uuid);
+    	
     }
 
 }

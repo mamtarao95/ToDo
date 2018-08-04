@@ -7,10 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import com.bridgelabz.fundoonoteapp.user.exceptions.ForgotPasswordException;
+import com.bridgelabz.fundoonoteapp.user.exceptions.UserNotFoundException;
 import com.bridgelabz.fundoonoteapp.user.exceptions.LoginException;
-import com.bridgelabz.fundoonoteapp.user.exceptions.RegisterationException;
-import com.bridgelabz.fundoonoteapp.user.exceptions.UserActivationException;
+import com.bridgelabz.fundoonoteapp.user.exceptions.IncorrectPasswordException;
+import com.bridgelabz.fundoonoteapp.user.exceptions.UserNotActivatedException;
 import com.bridgelabz.fundoonoteapp.user.models.Response;
 
 @ControllerAdvice
@@ -28,8 +28,8 @@ public class GlobalExceptionHandler {
 	  }*/
 	 
 
-	@ExceptionHandler(RegisterationException.class)
-	public ResponseEntity<Response> registrationExceptionHandler(RegisterationException exception,
+	@ExceptionHandler(IncorrectPasswordException.class)
+	public ResponseEntity<Response> registrationExceptionHandler(IncorrectPasswordException exception,
 			HttpServletRequest request) {
 		logger.info("Exception encountered at " + request.getRequestURI() + exception.getMessage());
 		Response response = new Response();
@@ -47,8 +47,8 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
 
-	@ExceptionHandler(UserActivationException.class)
-	public ResponseEntity<Response> userActivationExceptionHandler(UserActivationException exception,
+	@ExceptionHandler(UserNotActivatedException.class)
+	public ResponseEntity<Response> userActivationExceptionHandler(UserNotActivatedException exception,
 			HttpServletRequest request) {
 		logger.info("Exception encountered at " + request.getRequestURI() + ":  " + exception.getMessage());
 		Response response = new Response();
@@ -57,8 +57,8 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
 
-	@ExceptionHandler(ForgotPasswordException.class)
-	public ResponseEntity<Response> forgotPasswordExceptionHandler(ForgotPasswordException exception,
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<Response> forgotPasswordExceptionHandler(UserNotFoundException exception,
 			HttpServletRequest request) {
 		logger.info("Exception occured at " + request.getRequestURI() + ": " + exception.getMessage());
 		Response response = new Response();

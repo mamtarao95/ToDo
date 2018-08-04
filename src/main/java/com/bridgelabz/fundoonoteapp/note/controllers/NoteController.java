@@ -1,5 +1,6 @@
 package com.bridgelabz.fundoonoteapp.note.controllers;
 
+import java.io.IOException;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.bridgelabz.fundoonoteapp.note.exceptions.LabelNotFoundException;
+import com.bridgelabz.fundoonoteapp.note.exceptions.MalformedUrlException;
 import com.bridgelabz.fundoonoteapp.note.exceptions.NoteNotFoundException;
 import com.bridgelabz.fundoonoteapp.note.exceptions.NoteNotTrashedException;
 import com.bridgelabz.fundoonoteapp.note.exceptions.ReminderDateNotValidException;
@@ -44,11 +46,13 @@ public class NoteController {
 	 * @throws LabelNotFoundException
 	 * @throws ReminderDateNotValidException
 	 * @throws UserNotFoundException
+	 * @throws IOException 
+	 * @throws MalformedUrlException 
 	 */
 	@PostMapping("/create")
 	public ResponseEntity<NoteDTO> createNote(@RequestBody CreateNoteDTO createNoteDTO,
 			@RequestHeader("userId") String userId, HttpServletRequest request) throws NoteNotFoundException,
-			UnAuthorizedException, LabelNotFoundException, ReminderDateNotValidException, UserNotFoundException {
+			UnAuthorizedException, LabelNotFoundException, ReminderDateNotValidException, UserNotFoundException, IOException, MalformedUrlException {
 		
 		NoteDTO note = noteService.createNote(createNoteDTO, userId);
 	

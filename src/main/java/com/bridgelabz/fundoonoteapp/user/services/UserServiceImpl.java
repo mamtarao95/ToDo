@@ -9,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.bridgelabz.fundoonoteapp.user.exceptions.ForgotPasswordException;
-import com.bridgelabz.fundoonoteapp.user.exceptions.RegisterationException;
-import com.bridgelabz.fundoonoteapp.user.exceptions.UserActivationException;
+import com.bridgelabz.fundoonoteapp.user.exceptions.EmailIdNotFoundException;
+import com.bridgelabz.fundoonoteapp.user.exceptions.IncorrectPasswordException;
+import com.bridgelabz.fundoonoteapp.user.exceptions.TokenExpiresException;
+import com.bridgelabz.fundoonoteapp.user.exceptions.UserNotActivatedException;
+import com.bridgelabz.fundoonoteapp.user.exceptions.UserNotFoundException;
+import com.bridgelabz.fundoonoteapp.user.exceptions.UserNotUniqueException;
 import com.bridgelabz.fundoonoteapp.user.models.EmailDTO;
 import com.bridgelabz.fundoonoteapp.user.models.LoginDTO;
 import com.bridgelabz.fundoonoteapp.user.models.RegistrationDTO;
@@ -50,32 +53,32 @@ public class UserServiceImpl implements UserService {
 	private RedisRepository redisRepo;
 
 	@Override
-	public String loginUser(LoginDTO loginDTO) throws LoginException, UserActivationException {
+	public String loginUser(LoginDTO loginDTO) throws LoginException, UserNotFoundException, IncorrectPasswordException, UserNotActivatedException {
 
 		Utility.loginValidation(loginDTO);
 
 		Optional<User> optionalUser = userRepository.findByEmail(loginDTO.getEmail());
 		if (!optionalUser.isPresent()) {
-			throw new LoginException("User is not present");
+			throw new UserNotFoundException("User is not present");
 		}
 		if (!optionalUser.get().isActivated()) {
-			throw new UserActivationException("User is not activated");
+			throw new UserNotActivatedException("User is not activated");
 		}
 		if (!passwordEncoder.matches(loginDTO.getPassword(), optionalUser.get().getPassword())) {
-			throw new LoginException("Password is incorrect");
+			throw new IncorrectPasswordException("Password is incorrect");
 		}
 		return Utility.tokenGenerator(optionalUser.get().getId());
 	}
 
 	@Override
-	public void registerUser(RegistrationDTO registrationDTO) throws Exception {
+	public void registerUser(RegistrationDTO registrationDTO) throws UserNotUniqueException, IncorrectPasswordException{
 
 		Utility.validateUserInformation(registrationDTO);
 
 		Optional<User> optionalUser = userRepository.findByEmail(registrationDTO.getEmail());
 		if (optionalUser.isPresent()) {
 			System.out.println("user present");
-			throw new RegisterationException("User with same email-id already exists!!");
+			throw new UserNotUniqueException("User with same email-id already exists!!");
 		}
 
 		User user = modelMapper.map(registrationDTO, User.class);
@@ -94,14 +97,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void activateAccount(String token) throws UserActivationException {
+	public void activateAccount(String token) throws TokenExpiresException, UserNotFoundException {
 		if (Utility.isTokenExpired(token)) {
-			throw new UserActivationException("Token is expired and is no longer valid");
+			throw new TokenExpiresException("Token is expired and is no longer valid");
 		}
 		Claims claims = Utility.parseJWT(token);
 		Optional<User> optionalUser = userRepository.findById(claims.getId());
 		if (!optionalUser.isPresent()) {
-			throw new UserActivationException("Activation failed since user is not registered!!");
+			throw new UserNotFoundException("Activation failed since user is not registered!!");
 		}
 		User user = optionalUser.get();
 		user.setActivated(true);
@@ -110,11 +113,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void forgotPassword(String email) throws Exception {
+	public void forgotPassword(String email) throws EmailIdNotFoundException {
 		Optional<User> optionalUser = userRepository.findByEmail(email);
 
 		if (!optionalUser.isPresent()) {
-			throw new UserActivationException("Email id doesn't exists");
+			throw new EmailIdNotFoundException("Email id doesn't exists");
 		}
 		String uuid = Utility.generateUUID();
 
@@ -128,21 +131,21 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void resetPassword(SetPasswordDTO setPasswordDTO, String uuid) throws ForgotPasswordException {
+	public void resetPassword(SetPasswordDTO setPasswordDTO, String uuid) throws UserNotFoundException  {
 		
 		Utility.resetPasswordValidation(setPasswordDTO);
 
-		String userId = redisRepo.find(uuid);
-		Optional<User> optionalUser = userRepository.findById(userId);
-		
-		if (!optionalUser.isPresent()) {
-			throw new ForgotPasswordException("Email id doesn't exists");
+		String userId = redisRepo.getValue(uuid);
+		if(userId==null) {
+			throw new UserNotFoundException("user is not present");
 		}
-		
+		Optional<User> optionalUser = userRepository.findById(userId);
+			
 		User user = optionalUser.get();
 		user.setPassword(passwordEncoder.encode(setPasswordDTO.getNewPassword()));
 		
 		userRepository.save(user);
+		redisRepo.delete(uuid);
 
 	}
 

@@ -23,6 +23,7 @@ import com.bridgelabz.fundoonoteapp.note.exceptions.UnAuthorizedException;
 import com.bridgelabz.fundoonoteapp.note.exceptions.UserNotFoundException;
 import com.bridgelabz.fundoonoteapp.note.models.LabelDTO;
 import com.bridgelabz.fundoonoteapp.note.models.NoteDTO;
+import com.bridgelabz.fundoonoteapp.note.services.LabelService;
 import com.bridgelabz.fundoonoteapp.note.services.NoteService;
 import com.bridgelabz.fundoonoteapp.user.models.Response;
 
@@ -31,7 +32,7 @@ import com.bridgelabz.fundoonoteapp.user.models.Response;
 public class LabelController {
 
 	@Autowired
-	private NoteService noteService;
+	private LabelService labelService;
 
 	/**
 	 * @param request
@@ -43,7 +44,7 @@ public class LabelController {
 	public Iterable<LabelDTO> getLabels(HttpServletRequest request, @RequestHeader("userId") String userId)
 			throws LabelNotFoundException {
 		
-		return noteService.getLabels(userId);
+		return labelService.getLabels(userId);
 	}
 
 	/**
@@ -59,7 +60,7 @@ public class LabelController {
 	public ResponseEntity<LabelDTO> createLabel(@RequestParam String labelName, @RequestHeader("userId") String userId,
 			HttpServletRequest request) throws UnAuthorizedException, LabelNotFoundException, LabelNameAlreadyUsedException {
 		
-		LabelDTO labelViewDTO = noteService.createLabel(labelName, userId);
+		LabelDTO labelViewDTO = labelService.createLabel(labelName, userId);
 
 		return new ResponseEntity<>(labelViewDTO, HttpStatus.CREATED);
 	}
@@ -77,7 +78,7 @@ public class LabelController {
 	public ResponseEntity<Response> deleteLabel(@RequestParam String labelId, @RequestHeader("userId") String userId,
 			HttpServletRequest request) throws UnAuthorizedException, LabelNotFoundException, UserNotFoundException {
 		
-		noteService.deleteLabel(labelId, userId);
+		labelService.deleteLabel(labelId, userId);
 		
 		Response responseDTO = new Response();
 		responseDTO.setMessage("Label deleted Successfully!!");
@@ -104,7 +105,7 @@ public class LabelController {
 			@RequestHeader("userId") String userId, HttpServletRequest request) throws NoteNotFoundException,
 			UnAuthorizedException, LabelNotFoundException, LabelNameAlreadyUsedException, UserNotFoundException {
 
-		noteService.addLabel(labelId, userId, noteId);
+		labelService.addLabel(labelId, userId, noteId);
 
 		Response responseDTO = new Response();
 		responseDTO.setMessage("Label added Successfully!!");
@@ -129,7 +130,7 @@ public class LabelController {
 			@RequestHeader("userId") String userId)
 			throws UnAuthorizedException, LabelNotFoundException, UserNotFoundException {
 		
-		noteService.renameLabel(labelId, userId, newLabelName);
+		labelService.renameLabel(labelId, userId, newLabelName);
 		
 		Response responseDTO = new Response();
 		responseDTO.setMessage("Label renamed Successfully!!");
@@ -151,7 +152,7 @@ public class LabelController {
 	public Iterable<NoteDTO> getNotesOfLabel(@RequestBody String labelName, @RequestHeader("userId") String userId,
 			HttpServletRequest request) throws UnAuthorizedException, LabelNotFoundException, UserNotFoundException {
 		
-		return noteService.getNotesOfLabel(labelName, userId);
+		return labelService.getNotesOfLabel(labelName, userId);
 
 	}
 
@@ -172,7 +173,7 @@ public class LabelController {
 			@RequestHeader("userId") String userId)
 			throws UserNotFoundException, LabelNotFoundException, NoteNotFoundException, UnAuthorizedException {
 		
-		noteService.removeLabel(userId, labelId, noteId);
+		labelService.removeLabel(userId, labelId, noteId);
 		
 		Response responseDTO = new Response();
 		responseDTO.setMessage("Label removed Successfully!!");

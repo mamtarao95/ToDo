@@ -21,6 +21,20 @@ public class Note {
 	private boolean pin;
 	private boolean archive;
 	private List<LabelDTO> labels;
+	private List<Link> links;
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public List<Link> getLinks() {
+		return links;
+	}
+	public void setLinks(List<Link> links) {
+		this.links = links;
+	}
 	public String getNoteId() {
 		return id;
 	}

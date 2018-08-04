@@ -1,12 +1,10 @@
 package com.bridgelabz.fundoonoteapp.user.exceptions;
 
-public class ForgotPasswordException extends Exception {
-	
+public class TokenExpiresException extends Exception {
 	private static final long serialVersionUID = 1L;
 
-	public  ForgotPasswordException(String message) {
+	public  TokenExpiresException(String message) {
 		super(message);
 	}
-	
 
 }

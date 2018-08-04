@@ -16,7 +16,6 @@ public class UserConfiguration {
 	}
 
 	@Bean
-
 	public ModelMapper modelMapper() {
 		return new ModelMapper();
 

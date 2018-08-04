@@ -12,7 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.bridgelabz.fundoonoteapp.user.exceptions.UserActivationException;
+
+import com.bridgelabz.fundoonoteapp.user.exceptions.IncorrectPasswordException;
+import com.bridgelabz.fundoonoteapp.user.exceptions.TokenExpiresException;
+import com.bridgelabz.fundoonoteapp.user.exceptions.UserNotActivatedException;
+import com.bridgelabz.fundoonoteapp.user.exceptions.UserNotFoundException;
 import com.bridgelabz.fundoonoteapp.user.models.LoginDTO;
 import com.bridgelabz.fundoonoteapp.user.models.RegistrationDTO;
 import com.bridgelabz.fundoonoteapp.user.models.Response;
@@ -20,7 +24,7 @@ import com.bridgelabz.fundoonoteapp.user.models.SetPasswordDTO;
 import com.bridgelabz.fundoonoteapp.user.services.UserService;
 
 @RestController
-@RequestMapping("/fundoo")
+@RequestMapping("/user")
 public class UserController {
 
 	@Autowired
@@ -28,7 +32,7 @@ public class UserController {
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public ResponseEntity<Response> loginUser(@RequestBody LoginDTO loginDTO, HttpServletResponse res)
-			throws LoginException, UserActivationException {
+			throws LoginException, UserNotActivatedException, UserNotFoundException, IncorrectPasswordException {
 		String token = userService.loginUser(loginDTO);
 		Response responseDTO = new Response();
 		responseDTO.setMessage("Login Successfull!!");
@@ -50,7 +54,7 @@ public class UserController {
 
 	@RequestMapping(value = "/activateaccount", method = RequestMethod.GET)
 	public ResponseEntity<Response> activateAccount(@RequestParam("token") String token)
-			throws UserActivationException {
+			throws UserNotActivatedException, TokenExpiresException, UserNotFoundException {
 		System.out.println("token: " + token);
 		userService.activateAccount(token);
 		Response responseDTO = new Response();
