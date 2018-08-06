@@ -5,12 +5,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgelabz.fundoonoteapp.user.exceptions.IncorrectPasswordException;
@@ -21,14 +23,19 @@ import com.bridgelabz.fundoonoteapp.user.models.LoginDTO;
 import com.bridgelabz.fundoonoteapp.user.models.RegistrationDTO;
 import com.bridgelabz.fundoonoteapp.user.models.Response;
 import com.bridgelabz.fundoonoteapp.user.models.SetPasswordDTO;
+import com.bridgelabz.fundoonoteapp.user.services.FacebookService;
 import com.bridgelabz.fundoonoteapp.user.services.UserService;
 
-@RestController
+@Controller
 @RequestMapping("/user")
+@ResponseBody
 public class UserController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private FacebookService facebookService;
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public ResponseEntity<Response> loginUser(@RequestBody LoginDTO loginDTO, HttpServletResponse res)
@@ -41,6 +48,27 @@ public class UserController {
 		return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
 	}
+	
+	@GetMapping("/createFacebookAuthorization")
+	    public String createFacebookAuthorization(){
+	        return facebookService.createFacebookAuthorizationURL();
+	    }
+
+
+
+@GetMapping("/getName")
+public String getNameResponse(){
+    return facebookService.getName();
+}
+
+
+
+@GetMapping("/facebook")
+public void createFacebookAccessToken(@RequestParam("code") String code){
+    facebookService.createFacebookAccessToken(code);
+}
+
+
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public ResponseEntity<Response> registerUser(@RequestBody RegistrationDTO registrationDto) throws Exception {

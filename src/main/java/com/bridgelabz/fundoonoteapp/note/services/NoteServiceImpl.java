@@ -1,13 +1,10 @@
 package com.bridgelabz.fundoonoteapp.note.services;
 
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -19,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import com.bridgelabz.fundoonoteapp.note.exceptions.LabelNameAlreadyUsedException;
 import com.bridgelabz.fundoonoteapp.note.exceptions.LabelNotFoundException;
 import com.bridgelabz.fundoonoteapp.note.exceptions.MalformedUrlException;
 import com.bridgelabz.fundoonoteapp.note.exceptions.NoteNotFoundException;
@@ -30,7 +26,7 @@ import com.bridgelabz.fundoonoteapp.note.exceptions.UserNotFoundException;
 import com.bridgelabz.fundoonoteapp.note.models.CreateNoteDTO;
 import com.bridgelabz.fundoonoteapp.note.models.Label;
 import com.bridgelabz.fundoonoteapp.note.models.LabelDTO;
-import com.bridgelabz.fundoonoteapp.note.models.Link;
+import com.bridgelabz.fundoonoteapp.note.models.URLMetaData;
 import com.bridgelabz.fundoonoteapp.note.models.Note;
 import com.bridgelabz.fundoonoteapp.note.models.UpdateNoteDTO;
 import com.bridgelabz.fundoonoteapp.note.models.NoteDTO;
@@ -59,8 +55,6 @@ public class NoteServiceImpl implements NoteService {
 	@Autowired
 	private LabelRepository labelRepository;
 
-	@Autowired
-	private LabelElasticRepository labelElasticRepository;
 
 	@Autowired
 	private Environment env;
@@ -119,7 +113,7 @@ public class NoteServiceImpl implements NoteService {
 			note.setPin(true);
 		}
 
-		List<Link> listOfLinks = analyseDescription(createNoteDTO.getDescription());
+		List<URLMetaData> listOfLinks = analyseDescription(createNoteDTO.getDescription());
 
 		Date date = new Date();
 		note.setTitle(createNoteDTO.getTitle());
@@ -136,15 +130,15 @@ public class NoteServiceImpl implements NoteService {
 
 	}
 
-	private List<Link> analyseDescription(String description) throws MalformedUrlException {
+	private List<URLMetaData> analyseDescription(String description) throws MalformedUrlException {
 
 		String regex = "^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$";
 		String[] desciptionArray = description.split("\\s+");
 
-		List<Link> listOfLinks = new ArrayList<>();
+		List<URLMetaData> listOfLinks = new ArrayList<>();
 		for (int i = 0; i < desciptionArray.length; i++) {
 			if (desciptionArray[i].matches(regex)) {
-				Link link = new Link();
+				URLMetaData link = new URLMetaData();
 				Document doc;
 				try {
 					doc = Jsoup.connect(desciptionArray[i]).get();
@@ -163,6 +157,8 @@ public class NoteServiceImpl implements NoteService {
 				if (image.isPresent()) {
 					link.setImage(image.get());
 				}
+				link.setLinkDesc(doc.baseUri().replace("https://",""));
+				link.setLink(doc.baseUri());
 				listOfLinks.add(link);
 			}
 		}

@@ -16,6 +16,7 @@ public class NoteDTO {
 	private boolean trashed;
 	private List<LabelDTO> labels;
 	
+	
 	public NoteDTO() {
 		
 	}

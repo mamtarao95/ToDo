@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
 
 import com.bridgelabz.fundoonoteapp.note.exceptions.LabelNameAlreadyUsedException;
 import com.bridgelabz.fundoonoteapp.note.exceptions.LabelNotFoundException;
@@ -24,6 +25,7 @@ import com.bridgelabz.fundoonoteapp.note.repositories.NoteElasticRepository;
 import com.bridgelabz.fundoonoteapp.note.repositories.NoteRespository;
 import com.bridgelabz.fundoonoteapp.user.repositories.UserRepository;
 
+@Service
 public class LabelServiceImpl implements LabelService {
 
 	@Autowired

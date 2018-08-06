@@ -1,4 +1,4 @@
-package com.bridgelabz.fundooNoteApp.Test;
+/*package com.bridgelabz.fundooNoteApp.Test;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -70,8 +70,7 @@ public class NoteApplicationTest {
 	public void init() {
 		this.mockMvc = MockMvcBuilders.standaloneSetup(noteController).build();
 	}
-    @Autowired
-    private JacksonTester < CreateNoteDTO > json;
+
 	
 	@Test
 		public void createNoteTest() throws Exception {
@@ -127,7 +126,7 @@ public class NoteApplicationTest {
 		.andExpect(jsonPath("$.status").value(4))
 		.andDo(print());
 	}
-	/*
+	
 	//@Test
 	public void testGetNote() throws UnAuthorizedException, NoteNotFoundException, LabelNotFoundException, ReminderDateNotValidException, UserNotFoundException{
 		
@@ -140,7 +139,7 @@ public class NoteApplicationTest {
 		CreateNoteDTO createNoteDTO=new CreateNoteDTO("title","description","white" ,new java.util.Date(System.currentTimeMillis()),false,false);
 	Mockito.when(noteService.createNote(createNoteDTO,userId)).thenReturn(note);
 
-	}*/
+	}
 	
 	
 	//@Test
@@ -157,3 +156,4 @@ public class NoteApplicationTest {
 	
 }
 
+*/

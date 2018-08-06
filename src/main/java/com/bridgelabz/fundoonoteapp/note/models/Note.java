@@ -21,7 +21,7 @@ public class Note {
 	private boolean pin;
 	private boolean archive;
 	private List<LabelDTO> labels;
-	private List<Link> links;
+	private List<URLMetaData> urls;
 	
 	public String getId() {
 		return id;
@@ -29,11 +29,11 @@ public class Note {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public List<Link> getLinks() {
-		return links;
+	public List<URLMetaData> getLinks() {
+		return urls;
 	}
-	public void setLinks(List<Link> links) {
-		this.links = links;
+	public void setLinks(List<URLMetaData> links) {
+		this.urls = links;
 	}
 	public String getNoteId() {
 		return id;
